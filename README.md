@@ -14,3 +14,8 @@
 本人对于手机app开发几乎零基础，之前的Xamarin.Forms也不过是村里人进了次城，然后老老实实回村呆着。
 
 选择flutter编写，也是尝鲜所以没有直接原生开发，flutter虽然是跨平台的，但是只打算写一个android的，因为没有水果机所以也不打算写ios的。
+
+## 预览
+![image](https://github.com/RattanRockingChair/Moms_Player/blob/master/preview.jpg)
+
+上图就是整个app的全部，相当的简单粗暴且易使用:)
