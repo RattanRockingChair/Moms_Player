@@ -19,3 +19,7 @@
 ![image](https://github.com/RattanRockingChair/Moms_Player/blob/master/preview.jpg)
 
 上图就是整个app的全部，相当的简单粗暴且易使用:)
+
+此外，还给整了个不错的logo:)
+
+![image](https://github.com/RattanRockingChair/Moms_Player/blob/master/moms_player_icon.png)
