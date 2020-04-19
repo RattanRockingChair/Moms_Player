@@ -23,7 +23,7 @@ class MusicListItemWidget extends StatefulWidget {
     return _state = new MusicListItemWidgetState();
   }
 
-  Update(_MusicListItemState itemState) {
+  update(_MusicListItemState itemState) {
     _itemState = itemState;
     _state.setState(() => {});
   }
@@ -31,14 +31,16 @@ class MusicListItemWidget extends StatefulWidget {
   MusicInfo getMusicInfo() {
     return _item;
   }
+
+  bool _isActivated(){
+    return _itemState == _MusicListItemState.ePaused || _itemState == _MusicListItemState.ePlaying;
+  }
 }
 
 class MusicListItemWidgetState extends State<MusicListItemWidget> {
   @override
   Widget build(BuildContext context) {
     MusicListItemWidget widget = context.widget as MusicListItemWidget;
-
-
 
     return new Container(
       child: Row(
@@ -55,21 +57,21 @@ class MusicListItemWidgetState extends State<MusicListItemWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                   widget._item.GetTitle(),
+                    widget._item.GetTitle(),
                     style: TextStyle(
                         fontWeight:
-                            widget._itemState == _MusicListItemState.ePlaying
+                            widget._isActivated()
                                 ? FontWeight.bold
                                 : FontWeight.normal,
                         fontSize: 18,
-                        color: widget._itemState == _MusicListItemState.ePlaying
+                        color: widget._isActivated()
                             ? Colors.cyan
                             : Colors.black),
                   ),
                   Text(
                     widget._item.GetArtist(),
                     style: TextStyle(
-                      color: widget._itemState == _MusicListItemState.ePlaying
+                      color: widget._isActivated()
                           ? Colors.cyan
                           : Colors.black,
                       fontStyle: FontStyle.italic,
@@ -146,9 +148,12 @@ class MusicListWidgetState extends State<MusicListWidget> {
   _OnMusicServiceStateChanged(SrvStatus stated) {
     if (stated == SrvStatus.ePlaying) {
       var newIndex = _musicSrv.CurrentMusicIndex();
-      _UpdateItemWidgetState(newIndex, _MusicListItemState.ePlaying);
-      _UpdateItemWidgetState(_curPlayingIndex, _MusicListItemState.eNon);
-      _curPlayingIndex = newIndex;
+      
+      if (newIndex != _curPlayingIndex) {
+        _UpdateItemWidgetState(newIndex, _MusicListItemState.ePlaying);
+        _UpdateItemWidgetState(_curPlayingIndex, _MusicListItemState.eNon);
+        _curPlayingIndex = newIndex;
+      }
     } else {
       _UpdateItemWidgetState(
           _curPlayingIndex,
@@ -161,7 +166,7 @@ class MusicListWidgetState extends State<MusicListWidget> {
   bool _UpdateItemWidgetState(int index, _MusicListItemState itemState) {
     var item = _getItemWidget(index);
     if (null != item) {
-      item.Update(itemState);
+      item.update(itemState);
       return true;
     }
 
