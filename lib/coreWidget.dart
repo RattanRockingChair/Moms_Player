@@ -58,10 +58,6 @@ class PlayerControlBarWidget extends StatefulWidget {
   GlobalKey<MPButtonState> _playBtnKey = new GlobalKey<MPButtonState>();
   MusicService _musicSrv;
 
-  VoidCallback onPlayPause;
-  VoidCallback onPrevious;
-  VoidCallback onNext;
-
   PlayerControlBarWidget(@required MusicService musicSrv) {
     _musicSrv = musicSrv;
     _createSubCtrl();
@@ -84,20 +80,24 @@ class PlayerControlBarWidget extends StatefulWidget {
   }
 
   void _corePlayPause() {
-    if (onPlayPause != null) {
-      onPlayPause();
+    if (_musicSrv.Status() == SrvStatus.ePlaying) {
+      _musicSrv.Pause();
+    } else {
+      _musicSrv.Play();
     }
   }
 
   void _corePrevious() {
-    if (onPrevious != null) {
-      onPrevious();
+    var status = _musicSrv.Status();
+    if (SrvStatus.ePlaying == status || SrvStatus.ePaused == status) {
+      _musicSrv.PlayPrevious();
     }
   }
 
   void _coreNext() {
-    if (onNext != null) {
-      onNext();
+    var status = _musicSrv.Status();
+    if (SrvStatus.ePlaying == status || SrvStatus.ePaused == status) {
+      _musicSrv.PlayNext();
     }
   }
 
@@ -135,7 +135,7 @@ class PlayerControlState extends State<PlayerControlBarWidget> {
             margin: EdgeInsets.only(top: 5, bottom: 5),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[bar.prevBtn, play, bar.nextBtn],
             ))
       ],
@@ -155,7 +155,7 @@ class PlayerControlState extends State<PlayerControlBarWidget> {
       playerCtrlWidget._playBtnKey.currentState.widget.text = "播放";
     }
 
-    playerCtrlWidget._playBtnKey.currentState.setState(()=>{});
+    playerCtrlWidget._playBtnKey.currentState.setState(() => {});
   }
 }
 
@@ -164,7 +164,8 @@ class PlayerIndictorWidget extends StatefulWidget {
   Duration duration = Duration(seconds: 0);
   MusicService _musicService;
 
-  final StreamController<int> _posController = StreamController<int>.broadcast();
+  final StreamController<int> _posController =
+      StreamController<int>.broadcast();
 
   Stream<int> get onIndictorPosChanged => _posController.stream;
 
@@ -204,7 +205,8 @@ class PlayerIndictorState extends State<PlayerIndictorWidget> {
             margin: EdgeInsets.only(left: 5, right: 5),
             child: Row(
               children: <Widget>[
-                Text("${_formatDuartion(Duration(seconds: indictor.curPos.toInt()))}"),
+                Text(
+                    "${_formatDuartion(Duration(seconds: indictor.curPos.toInt()))}"),
                 Expanded(
                   child: Container(),
                 ),
@@ -217,7 +219,7 @@ class PlayerIndictorState extends State<PlayerIndictorWidget> {
     );
   }
 
-  _formatDuartion(Duration d){
+  _formatDuartion(Duration d) {
     return d.toString().split('.').first.padLeft(8, "0");
   }
 
@@ -240,4 +242,3 @@ class PlayerIndictorState extends State<PlayerIndictorWidget> {
     setState(() {});
   }
 }
-

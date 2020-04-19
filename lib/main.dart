@@ -3,17 +3,20 @@ import 'package:moms_player/musicService.dart';
 import 'package:moms_player/coreWidget.dart';
 import 'musicListWidget.dart';
 
+
+const g_AppTitle = '妈妈的播放器';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '妈妈的播放器',
+      title: g_AppTitle,
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
-      home: MyHomePage(title: '妈妈的播放器'),
+      home: MyHomePage(title: g_AppTitle),
     );
   }
 }
@@ -28,15 +31,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   Scaffold _content;
-  MusicListWidget _dataView = null;
-  FlatButton _prevBtn;
-  MPButtonWidget _playBtn;
-  FlatButton _nextBtn;
+  MusicListWidget _dataView;
   MusicService _musciSrv = new MusicService();
 
-  _MyHomePageState() {}
+  _MyHomePageState();
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _content = Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text(widget.title ,style: TextStyle(color: Colors.white),),
         ),
         body: FutureBuilder(
-          future: FillPlayList(),
+          future: fillPlayList(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return createLoadingContentWidget();
@@ -85,13 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget createPlayBar() {
     var playBar = PlayerControlBarWidget(_musciSrv);
-    playBar.onPlayPause = _Play;
-    playBar.onNext = _Next;
-    playBar.onPrevious = _Previous;
     return playBar;
   }
 
-  FillPlayList() async {
+  fillPlayList() async {
     if (_dataView != null) {
       return;
     }
@@ -104,27 +100,5 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _dataView = MusicListWidget(_musciSrv);
     _dataView.appendItem(_musciSrv.GetAllMusicList());
-  }
-
-  _Play() {
-    if (_musciSrv.Status() == SrvStatus.ePlaying) {
-      _musciSrv.Pause();
-    } else {
-      _musciSrv.Play();
-    }
-  }
-
-  _Previous() {
-    var status = _musciSrv.Status();
-    if (SrvStatus.ePlaying == status || SrvStatus.ePaused == status) {
-      _musciSrv.PlayPrevious();
-    }
-  }
-
-  _Next() {
-    var status = _musciSrv.Status();
-    if (SrvStatus.ePlaying == status || SrvStatus.ePaused == status) {
-      _musciSrv.PlayNext();
-    }
   }
 }
