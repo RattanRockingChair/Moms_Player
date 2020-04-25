@@ -32,8 +32,9 @@ class MusicListItemWidget extends StatefulWidget {
     return _item;
   }
 
-  bool _isActivated(){
-    return _itemState == _MusicListItemState.ePaused || _itemState == _MusicListItemState.ePlaying;
+  bool _isActivated() {
+    return _itemState == _MusicListItemState.ePaused ||
+        _itemState == _MusicListItemState.ePlaying;
   }
 }
 
@@ -59,21 +60,17 @@ class MusicListItemWidgetState extends State<MusicListItemWidget> {
                   Text(
                     widget._item.GetTitle(),
                     style: TextStyle(
-                        fontWeight:
-                            widget._isActivated()
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                        fontWeight: widget._isActivated()
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         fontSize: 18,
-                        color: widget._isActivated()
-                            ? Colors.cyan
-                            : Colors.black),
+                        color:
+                            widget._isActivated() ? Colors.cyan : Colors.black),
                   ),
                   Text(
                     widget._item.GetArtist(),
                     style: TextStyle(
-                      color: widget._isActivated()
-                          ? Colors.cyan
-                          : Colors.black,
+                      color: widget._isActivated() ? Colors.cyan : Colors.black,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -115,6 +112,7 @@ class MusicListWidgetState extends State<MusicListWidget> {
   MusicListWidgetState(MusicService srv) {
     _musicSrv = srv;
     _musicSrv.onServiceStateChanged.listen(_OnMusicServiceStateChanged);
+    _musicSrv.onPlayerCompletion.listen(_OnPlayerCompletion);
   }
 
   @override
@@ -148,7 +146,7 @@ class MusicListWidgetState extends State<MusicListWidget> {
   _OnMusicServiceStateChanged(SrvStatus stated) {
     if (stated == SrvStatus.ePlaying) {
       var newIndex = _musicSrv.CurrentMusicIndex();
-      
+
       if (newIndex != _curPlayingIndex) {
         _UpdateItemWidgetState(newIndex, _MusicListItemState.ePlaying);
         _UpdateItemWidgetState(_curPlayingIndex, _MusicListItemState.eNon);
@@ -178,5 +176,10 @@ class MusicListWidgetState extends State<MusicListWidget> {
     if (null != item) {
       _musicSrv.PlayByItem(item.getMusicInfo());
     }
+  }
+
+  void _OnPlayerCompletion(void event) {
+    _curPlayingIndex = -1;
+    _UpdateItemWidgetState(_curPlayingIndex, _MusicListItemState.eNon);
   }
 }

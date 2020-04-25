@@ -186,6 +186,7 @@ class PlayerIndictorState extends State<PlayerIndictorWidget> {
     _musicService = musicSrv;
     _musicService.onMusicPosChanged.listen(_onMusicSrvPosChanged);
     _musicService.onMusicDurationChanged.listen(_onMusicSrvDurationChanged);
+    _musicService.onPlayerCompletion.listen(_onPlayerCompletion);
   }
 
   @override
@@ -239,6 +240,13 @@ class PlayerIndictorState extends State<PlayerIndictorWidget> {
     var indictor = context.widget as PlayerIndictorWidget;
     indictor.curPos = 0;
     indictor.duration = event;
+    setState(() {});
+  }
+
+  void _onPlayerCompletion(void event) {
+    var indictor = context.widget as PlayerIndictorWidget;
+    indictor.curPos = 0;
+    indictor.duration = Duration.zero;
     setState(() {});
   }
 }

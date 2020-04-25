@@ -35,6 +35,12 @@ class MusicInfo {
   }
 }
 
+enum AutoPlayMode{
+  eNon,         // 不自动播放,即播完停止
+  eSequential,  // 自动顺序播放
+  eRandom       // 自动随机播放
+}
+
 class MusicService {
   static const String _channelName = "channel.momsplayer/musicfinder";
   static const _platform = const MethodChannel(_channelName);
@@ -42,6 +48,7 @@ class MusicService {
   int _musicIndex = -1;
   List<MusicInfo> _musicItems = List<MusicInfo>();
   AudioPlayer _audioPlayer = AudioPlayer();
+  AutoPlayMode _autoPlayMode = AutoPlayMode.eNon;
 
   final StreamController<Duration> _musicPosChangedCtrller =
       StreamController<Duration>.broadcast();
@@ -119,12 +126,16 @@ class MusicService {
   }
 
   PlayNext() {
-    if (_musicIndex + 1 > _musicItems.length) {
+    if (_musicIndex + 1 >= _musicItems.length) {
       _StopCore();
       return;
     }
 
     _PlayCore(_musicItems[++_musicIndex]);
+  }
+
+  AutoPlay(AutoPlayMode mode){
+    _autoPlayMode = mode;
   }
 
   _PlayCore(MusicInfo item) {
@@ -190,6 +201,12 @@ class MusicService {
 
   void onAudioPlayerCompletion(void event) {
     _playerCompletion.add(event);
+
+    if (_autoPlayMode == AutoPlayMode.eNon) {
+      return;
+    }
+
+    PlayNext();
   }
 
   void seekTo(int second) {

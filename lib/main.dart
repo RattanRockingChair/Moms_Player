@@ -35,7 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
   MusicListWidget _dataView;
   MusicService _musciSrv = new MusicService();
 
-  _MyHomePageState();
+  _MyHomePageState(){
+    _musciSrv.AutoPlay(AutoPlayMode.eSequential);
+  }
 
   @override
   Widget build(BuildContext context) {
